@@ -18,4 +18,19 @@ bug builds more things
 repeat
 
 
+Time passing - all objects run onTick method
 
+Created objects
+Objects can move around
+
+Give obejcts hp/
+Weather occurs, can do bad things
+Storms - damages buildings and people. Global? Probably.
+
+
+Building needs resources
+Resources can be gathered from inventory & From nearby terrain.
+Buildings must do something.
+
+They can protect you from bad weather.
+They can store resources and protect them from bad weather.

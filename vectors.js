@@ -21,17 +21,35 @@ function vector(x, y) {
 		x,
 		y,
 		add(vec) {
-			me.x += vec.x;
-			me.y += vec.y;
+			if (typeof (vec) === 'number') {
+				vec = vector(vec, vec);
+			}
+			let newVec = vector(me);
+			newVec.x += vec.x;
+			newVec.y += vec.y;
+			return newVec;
 		},
 		subtract(vec) {
-			me.x -= vec.x;
-			me.y -= vec.y;
+			if (typeof (vec) === 'number') {
+				vec = vector(vec, vec);
+			}
+			let newVec = vector(me);
+			newVec.x -= vec.x;
+			newVec.y -= vec.y;
+			return newVec;
 		},
 		multiply(vec) {
-			me.x *= vec.x;
-			me.y *= vec.y;
+			if (typeof (vec) === 'number') {
+				vec = vector(vec, vec);
+			}
+			let newVec = vector(me);
+			newVec.x *= vec.x;
+			newVec.y *= vec.y;
+			return newVec;
 		}
 	};
 	return me;
+}
+vector.random = (maxRange) => {
+	return vector(Math.floor(Math.random() * maxRange), Math.floor(Math.random() * maxRange));
 }
