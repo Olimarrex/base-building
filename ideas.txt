@@ -27,6 +27,9 @@ Give obejcts hp/
 Weather occurs, can do bad things
 Storms - damages buildings and people. Global? Probably.
 
+Logging damages & death:
+	Add Lines if at location
+	If you're controlling 
 
 Building needs resources
 Resources can be gathered from inventory & From nearby terrain.
@@ -34,3 +37,62 @@ Buildings must do something.
 
 They can protect you from bad weather.
 They can store resources and protect them from bad weather.
+
+
+
+Perhaps you can possess whatever creatures you feel like?
+
+Skills & stats:
+Terrain:
+	Fertility
+	Flatness?
+	Minerals
+Creatures:
+	Building
+		Decides the speed at which you build things
+		And Quality of said things
+	Surveying
+		Decides the ease with which you can scout terrain and deduce it's power
+	Combat
+		Combat
+	Durability
+		Health & resistance to certain effects
+	Growin Plants
+		PLANMTSN
+
+
+Basic gameplay loop?
+Build shit
+Things occur that will damage shit & 
+natural events 
+
+Exploration?
+Finding cool areas could be fun
+
+Rise and fall
+You possess bugs and shit and make them build things
+At some point things happen and stuff will inevitably collapse
+But depending on how it collapses you can rebuild from the ashes something cooler
+Rinse and repeat, gives you a natural ebb and flow of stuff
+
+Perhaps it doesn't necessarily collapse fully
+
+It seems somewhat unintuitive at the moment
+to progress you must eliminate progress
+Instead maybe it should just simply be required for some reason
+but then because you are picking up from the ashes, the next run will be better than before.
+Ruins can be explored and rebuilt
+Survivors can be found to help
+
+
+
+Methods of collapse:
+Catastrophic natural disasters
+Excessive raiding by another kingdom
+Rebellion
+
+
+
+
+TODO NEXT:
+Resource handling

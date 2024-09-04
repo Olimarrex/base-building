@@ -1,86 +1,6 @@
 let kingdom = {};
 
-let form = document.getElementById('form');
-
-// Map Stuff
-const mapSize = 10;
-const map = (() => {
-	let mapArray = [];
-	let objects = [];
-	let ticks = 0;
-	const terrains = ['rocky', 'flat'];
-
-	//generate map
-	for (let i = 0; i < mapSize; i++) {
-		let strip = [];
-		for (let i = 0; i < mapSize; i++) {
-			strip.push({
-				terrain: terrains[Math.floor(Math.random() * terrains.length)],
-				objects: []
-			});
-		}
-		mapArray.push(strip);
-	}
-
-	let map = {
-		getTime() {
-			return ticks;
-		},
-		getSegment(pos) {
-			return mapArray?.[pos.x]?.[pos.y];
-		},
-		createObject(spread) {
-			let pos = spread.pos || vector(0, 0);
-			let hp = spread.hp || 10;
-			delete spread.pos;
-			delete spread.hp;
-			let obj = {
-				name: 'Unnamed',
-				...spread,
-				getHp() {
-					return hp;
-				},
-				hurt(dmg) {
-					hp = hp - dmg;
-				},
-				getPos: () => {
-					return vector(pos);
-				},
-				move(dir) {
-					let segment = map.getSegment(pos);
-					var index = segment.objects.indexOf(obj);
-					let newPos = pos.add(dir);
-					let newSegment = map.getSegment(newPos);
-					if (newSegment) {
-						segment.objects.splice(index, 1);
-						pos = newPos;
-						newSegment.objects.push(obj);
-						return true;
-					}
-					else {
-						return false;
-					}
-				}
-			};
-			{
-				let segment = map.getSegment(pos);
-				segment.objects.push(obj);
-			}
-			objects.push(obj);
-			return obj;
-		},
-		tick() {
-			ticks++;
-			for (let i = 0; i < objects.length; i++) {
-				let item = objects[i];
-				if (item.onTick) {
-					item.onTick();
-				}
-			}
-		}
-	};
-	return map;
-})();
+let form = nonNull(document.getElementById('form'));
 
 //#region Weather & Natural events
 const weather = (() => {
@@ -88,37 +8,57 @@ const weather = (() => {
 	let activeWeather = [];
 	let obj = {
 		weatherTick() {
-			if (activeWeather.length > maxWeatherCount) {
-				if (Math.floor(Math.random() * 10) === 0) {
-					activeWeather += {
-						type: 'thunder',
-						onTick: () => {
-							map.createObject({
-								name: 'thunder cloud',
+			if (activeWeather.length < maxWeatherCount) {
+				if (Math.floor(Math.random() * 2) === 0) {
+					gameConsole.addLine('A storm has come about!');
+					activeWeather.push({
+						onTick() {
+							this.duration--;
+							if (this.duration < 8) {
+								let objects = map.getObjects();
+								objects.forEach(x => x.hurt('lashed', 'the rain', 1));
+							}
+							else {
+								gameConsole.addLine('The storm worsens!');
+							}
+						},
+						getDuration() {
+							return this.duration;
+						},
+						onRemove() {
+							gameConsole.addLine('The storm abates');
+						},
+						getDescription() {
+							return 'STOOOORM AMOGUD';
+						},
+						duration: 10
+					});
+				}
+			}
 
-							})
-						}
-					};
+			for (let i = 0; i < activeWeather.length; i++) {
+				let item = activeWeather[i];
+				item.onTick();
+				console.log(item.getDuration());
+				if (item.getDuration() <= 0) {
+					activeWeather.splice(i, 1);
+					item.onRemove();
+					i--;
 				}
 			}
 		}
 	}
+	return obj;
 })();
 //#endregion
 
-const player = map.createObject({
-	name: 'player',
-	onTick() {
-
-	}
-});
 
 for (let i = 0; i < 10; i++) {
 	map.createObject({
 		name: 'ant',
 		onTick() {
-			while (!this.move(vector.random(3).add(-1))) {
-				
+			if (map.getTime() % 4 === 0) {
+				while (!this.move(vector.random(3).add(-1))) { }
 			}
 		}
 	});
@@ -134,7 +74,7 @@ const commands = {
 				if (!direction) {
 					gameConsole.addLine(`Unrecognised direction '${segments[1]}'`);
 				}
-				else if (player.move(direction)) {
+				else if (player.possessed.move(direction)) {
 					map.tick();
 				}
 				else {
@@ -151,7 +91,7 @@ const commands = {
 		action(segments) {
 			map.createObject({
 				name: segments[1],
-				pos: player.getPos()
+				pos: player.possessed.getPos()
 			});
 			map.tick();
 		}
@@ -160,21 +100,30 @@ const commands = {
 		action: (segments) => {
 			gameConsole.setMaxConsoleSize(Number(segments[1]));
 		}
+	},
+	possess: {
+		action: (segments) => {
+			let objects = map.getSegment(player.possessed.getPos()).objects;
+			objects = objects.filter(x => x.name === segments[1] && x !== player.possessed);
+			if (objects.length > 0) {
+				player.possessed = objects[0];
+			}
+		}
 	}
 };
+
 //#endregion
 
 //#region Console
-let input = document.getElementById('inputWindow');
+let input = /** @type {HTMLInputElement} */ (document.getElementById('inputWindow'));
 let gameConsole = (() => {
 	let maxConsoleSize = 10;
 	let texts = [];
-	let textWindow = document.getElementById('textWindow');
-	textWindow.innerHTML = texts;
+	let textWindow = nonNull(document.getElementById('textWindow'));
 	function buildConsole() {
-		let pos = player.getPos();
+		let pos = player.possessed.getPos();
 		let segment = map.getSegment(pos);
-		const location = `You're at the coords: ${player.getPos().x},${player.getPos().y}
+		const location = `You're at the coords: ${player.possessed.getPos().x},${player.possessed.getPos().y}
 		<br/>
 		The terrain is: ${segment.terrain}
 		<br/>
