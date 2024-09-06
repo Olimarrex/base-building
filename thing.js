@@ -1,56 +1,10 @@
-let kingdom = {};
+import { vector, parseDirection } from './vectors.js';
+import { nonNull } from './util.js';
+import { map } from './map.js';
+import { player } from './player.js';
+
 
 let form = nonNull(document.getElementById('form'));
-
-//#region Weather & Natural events
-const weather = (() => {
-	const maxWeatherCount = 1;
-	let activeWeather = [];
-	let obj = {
-		weatherTick() {
-			if (activeWeather.length < maxWeatherCount) {
-				if (Math.floor(Math.random() * 2) === 0) {
-					gameConsole.addLine('A storm has come about!');
-					activeWeather.push({
-						onTick() {
-							this.duration--;
-							if (this.duration < 8) {
-								let objects = map.getObjects();
-								objects.forEach(x => x.hurt('lashed', 'the rain', 1));
-							}
-							else {
-								gameConsole.addLine('The storm worsens!');
-							}
-						},
-						getDuration() {
-							return this.duration;
-						},
-						onRemove() {
-							gameConsole.addLine('The storm abates');
-						},
-						getDescription() {
-							return 'STOOOORM AMOGUD';
-						},
-						duration: 10
-					});
-				}
-			}
-
-			for (let i = 0; i < activeWeather.length; i++) {
-				let item = activeWeather[i];
-				item.onTick();
-				console.log(item.getDuration());
-				if (item.getDuration() <= 0) {
-					activeWeather.splice(i, 1);
-					item.onRemove();
-					i--;
-				}
-			}
-		}
-	}
-	return obj;
-})();
-//#endregion
 
 
 for (let i = 0; i < 10; i++) {
@@ -116,7 +70,7 @@ const commands = {
 
 //#region Console
 let input = /** @type {HTMLInputElement} */ (document.getElementById('inputWindow'));
-let gameConsole = (() => {
+export let gameConsole = (() => {
 	let maxConsoleSize = 10;
 	let texts = [];
 	let textWindow = nonNull(document.getElementById('textWindow'));

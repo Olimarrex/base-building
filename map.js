@@ -1,6 +1,21 @@
+import { vector } from './vectors.js';
+import { gameConsole } from './thing.js';
+
+/**
+ * @typedef mapObject
+ * @property {() => vector} getPos
+ * @property {(vector: vector) => boolean} move
+ * @property {string} name
+ * @property {string} properName
+ */
+
+/**
+ * @exports mapObject
+ */
+
 // Map Stuff
 const mapSize = 10;
-const map = (() => {
+export const map = (() => {
 	let mapArray = [];
 	let objects = [];
 	let ticks = 0;
@@ -28,6 +43,11 @@ const map = (() => {
 		getSegment(pos) {
 			return mapArray?.[pos.x]?.[pos.y];
 		},
+		/**
+		 * 
+		 * @param {*} spread 
+		 * @returns {mapObject}
+		 */
 		createObject(spread) {
 			let pos = spread.pos || vector(0, 0);
 			let hp = spread.hp || 10;
@@ -94,3 +114,54 @@ const map = (() => {
 	};
 	return map;
 })();
+
+
+//#region Weather & Natural events
+const weather = (() => {
+	const maxWeatherCount = 1;
+	let activeWeather = [];
+	let obj = {
+		weatherTick() {
+			if (activeWeather.length < maxWeatherCount) {
+				if (Math.floor(Math.random() * 2) === 0) {
+					gameConsole.addLine('A storm has come about!');
+					activeWeather.push({
+						onTick() {
+							this.duration--;
+							if (this.duration < 8) {
+								let objects = map.getObjects();
+								objects.forEach(x => x.hurt('lashed', 'the rain', 1));
+							}
+							else {
+								gameConsole.addLine('The storm worsens!');
+							}
+						},
+						getDuration() {
+							return this.duration;
+						},
+						onRemove() {
+							gameConsole.addLine('The storm abates');
+						},
+						getDescription() {
+							return 'STOOOORM AMOGUD';
+						},
+						duration: 10
+					});
+				}
+			}
+
+			for (let i = 0; i < activeWeather.length; i++) {
+				let item = activeWeather[i];
+				item.onTick();
+				console.log(item.getDuration());
+				if (item.getDuration() <= 0) {
+					activeWeather.splice(i, 1);
+					item.onRemove();
+					i--;
+				}
+			}
+		}
+	}
+	return obj;
+})();
+//#endregion

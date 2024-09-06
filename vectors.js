@@ -1,4 +1,11 @@
-function parseDirection(text) {
+
+/**
+ * @typedef vector
+ * @property {number} x
+ * @property {number} y
+ */
+
+export function parseDirection(text) {
 	if (text == 'up') {
 		return vector(0, -1);
 	}
@@ -13,7 +20,7 @@ function parseDirection(text) {
 	}
 }
 
-function vector(x, y) {
+export function vector(x, y) {
 	if (typeof (x.x) === 'number' && typeof (x.y) === 'number') {
 		return vector(x.x, x.y);
 	}

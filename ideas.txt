@@ -94,5 +94,11 @@ Rebellion
 
 
 
+
+
 TODO NEXT:
+Moving over to using native modules as an experiment.
+https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSRequestNotHttp
+https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/set_up_a_local_testing_server
+https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/How_does_the_Internet_work
 Resource handling
